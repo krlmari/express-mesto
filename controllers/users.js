@@ -3,13 +3,13 @@ const User = require('../models/user');
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(404).send({ message: 'Запрашиваемые пользователи не найдены' }));
 };
 
 const getUserId = (req, res) => {
   User.findById(req.params._id)
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(404).send({ message: 'Запрашиваемый пользователь не найден' }));
 };
 
 const createUser = (req, res) => {
@@ -20,7 +20,7 @@ const createUser = (req, res) => {
     // Вернём записанные в базу данные
     .then((user) => res.send({ data: user }))
     // Данные не записались, вернём ошибку
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(400).send({ message: 'Некорректные данные' }));
 };
 
 const updateUser = (req, res) => {
@@ -28,7 +28,7 @@ const updateUser = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((newUser) => res.send({ data: newUser }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(400).send({ message: 'Некорректные данные' }));
 };
 
 const updateAvatar = (req, res) => {
@@ -36,7 +36,7 @@ const updateAvatar = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar })
     .then((newAvatar) => res.send({ data: newAvatar }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(400).send({ message: 'Некорректные данные' }));
 };
 
 module.exports = {
