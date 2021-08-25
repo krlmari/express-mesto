@@ -15,16 +15,15 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   // useFindAndModify: false,
 });
 
-app.use('/', users);
-
 app.use((req, res, next) => {
   req.user = {
-    _id: '612651f570474ac41e45573e',
+    _id: '6126954475e5b1263013fa98',
   };
 
   next();
 });
 
+app.use('/', users);
 app.use('/', cards);
 
 app.listen(PORT, () => {});
