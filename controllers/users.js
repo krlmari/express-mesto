@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -13,10 +14,18 @@ const getUserId = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  // Получим из объекта запроса имя и описание пользователя
-  const { name, about, avatar } = req.body;
-  // Создадим документ на основе пришедших данных
-  User.create({ name, about, avatar })
+  const { name, about, avatar, email } = req.body;
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) =>
+      User.create({
+        name,
+        about,
+        avatar,
+        email: email,
+        password: hash,
+      }),
+    )
     // Вернём записанные в базу данные
     .then((user) => res.send({ data: user }))
     // Данные не записались, вернём ошибку
