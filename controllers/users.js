@@ -1,5 +1,5 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -22,7 +22,7 @@ const createUser = (req, res) => {
         name,
         about,
         avatar,
-        email: email,
+        email,
         password: hash,
       }),
     )
