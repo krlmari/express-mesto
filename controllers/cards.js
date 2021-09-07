@@ -23,8 +23,7 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    // eslint-disable-next-line comma-dangle
-    { new: true }
+    { new: true },
   )
     .then((likes) => res.send({ data: likes }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
@@ -34,8 +33,7 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // Убрать _id из массива
-    // eslint-disable-next-line comma-dangle
-    { new: true }
+    { new: true },
   )
     .then((likes) => res.send({ data: likes }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
