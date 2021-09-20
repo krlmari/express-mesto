@@ -13,10 +13,18 @@ const createCard = (req, res) => {
     .catch(() => res.status(400).send({ message: 'Некорректные данные' }));
 };
 
-const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+const deleteCard = (req, res, next) => {
+  const { cardId } = req.params;
+
+  Card.findById(cardId).then((card) => {
+    if (card.owner.equals(req.user._id)) {
+      Card.findByIdAndRemove(cardId)
+        .then(() => {
+          res.status(200).send({ message: 'Карточка удалена' });
+        })
+        .catch(next);
+    }
+  });
 };
 
 const likeCard = (req, res) => {
