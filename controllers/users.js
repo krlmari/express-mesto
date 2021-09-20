@@ -63,6 +63,12 @@ const login = (req, res) => {
     });
 };
 
+const getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
 module.exports = {
   getUsers,
   getUserId,
@@ -70,4 +76,5 @@ module.exports = {
   updateUser,
   updateAvatar,
   login,
+  getUserInfo,
 };
