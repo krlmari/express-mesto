@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('./middlewares/auth');
 
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -17,9 +18,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   // useFindAndModify: false,
 });
 
-app.use('/', users);
-app.use('/', cards);
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+app.use(auth);
+
+app.use('/', users);
+app.use('/', cards);
 
 app.listen(PORT, () => {});
