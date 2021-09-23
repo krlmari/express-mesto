@@ -3,10 +3,15 @@ const NotFoundError = require('../errors/not-found-err');
 const IncorrectError = require('../errors/incorrect-err');
 const NotOwnerIdError = require('../errors/auth-err');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((card) => res.send({ data: card }))
-    .catch(() => res.status(404).send({ message: 'Запрашиваемые карточки не найдены' }));
+    .then((cards) => {
+      if (!cards) {
+        throw new NotFoundError('Запрашиваемые карточки не найдены!');
+      }
+      res.send({ data: cards });
+    })
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
