@@ -1,5 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
+const { errors } = require('celebrate');
+
 const auth = require('./middlewares/auth');
 
 const errorMain = require('./middlewares/errors');
@@ -28,6 +31,7 @@ app.use(auth);
 app.use('/', users);
 app.use('/', cards);
 
+app.use(errors);
 app.use(errorMain);
 
 app.listen(PORT, () => {});
