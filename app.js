@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const auth = require('./middlewares/auth');
 
+const errorMain = require('./middlewares/errors');
+
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 
@@ -25,5 +27,7 @@ app.use(auth);
 
 app.use('/', users);
 app.use('/', cards);
+
+app.use(errorMain);
 
 app.listen(PORT, () => {});

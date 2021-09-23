@@ -2,17 +2,29 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const NotFoundError = require('../errors/not-found-err');
+const IncorrectError = require('../errors/incorrect-err');
+const AuthError = require('../errors/auth-err');
+
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => res.status(404).send({ message: 'Запрашиваемые пользователи не найдены' }))
+    .then((users) => {
+      if (!users) {
+        throw new NotFoundError('Запрашиваемые пользователи не найдены.');
+      }
+      res.send({ data: users });
+    })
     .catch(next);
 };
 
 const getUserId = (req, res, next) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(404).send({ message: 'Запрашиваемый пользователь не найден' }))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Запрашиваемый пользователь не найден.');
+      }
+      res.send({ data: user });
+    })
     .catch(next);
 };
 
@@ -32,7 +44,9 @@ const createUser = (req, res, next) => {
     // Вернём записанные в базу данные
     .then((user) => res.send({ data: user }))
     // Данные не записались, вернём ошибку
-    .catch(() => res.status(400).send({ message: 'Некорректные данные' }))
+    .catch(() => {
+      throw new IncorrectError('Некорректные данные для создания нового пользователя.');
+    })
     .catch(next);
 };
 
@@ -41,7 +55,9 @@ const updateUser = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((newUser) => res.send({ data: newUser }))
-    .catch(() => res.status(400).send({ message: 'Некорректные данные' }))
+    .catch(() => {
+      throw new IncorrectError('Некорректные данные для обновления пользователя.');
+    })
     .catch(next);
 };
 
@@ -50,7 +66,9 @@ const updateAvatar = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar })
     .then((newAvatar) => res.send({ data: newAvatar }))
-    .catch(() => res.status(400).send({ message: 'Некорректные данные' }))
+    .catch(() => {
+      throw new IncorrectError('Некорректные данные для аватара.');
+    })
     .catch(next);
 };
 
@@ -63,15 +81,20 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
+    .catch(() => {
+      throw new AuthError('Некорректные почта и/или пароль.');
     })
     .catch(next);
 };
 
 const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному _id не найден.');
+      }
+      res.send(user);
+    })
     .catch(next);
 };
 
