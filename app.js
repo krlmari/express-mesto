@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const auth = require('./middlewares/auth');
 
@@ -23,6 +24,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   // useFindAndModify: false,
 });
 
+// Подключаем логгер запросов
+app.use(requestLogger);
+
 app.post('/signin', login);
 app.post('/signup', createUser);
 
@@ -30,6 +34,9 @@ app.use(auth);
 
 app.use('/', users);
 app.use('/', cards);
+
+// Подключаем логгер ошибок
+app.use(errorLogger);
 
 app.use(errors);
 app.use(errorMain);
